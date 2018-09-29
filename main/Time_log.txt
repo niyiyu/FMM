@@ -1,0 +1,15 @@
+Level 1 run time:
+
+real 1.82
+user 1.73
+sys 0.06
+Level 2 run time:
+
+real 1.19
+user 1.12
+sys 0.02
+Level 3 run time:
+
+real 0.24
+user 0.23
+sys 0.01

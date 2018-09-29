@@ -6,7 +6,8 @@
 !isroot distinguish the source point
 !breaker switch
         real(8) h,tmin
-        parameter(n=700,m=1000,si=250,sj=500,h=10,maxsize=10000)
+        parameter(h=5,maxsize=10000)
+        parameter(n=#size_of_n#,m=#size_of_m#,si=#pi_of_source#,sj=#pj_of_source#,radius=#radius#)
 !m n discretized grid size
 !maxsize max size of the band
 !si sj source
@@ -20,13 +21,13 @@
         integer,dimension(maxsize)::bandwx,bandwz
         
         call inverse(n,m,si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker,h,tmin,&
-        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz)
+        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz,radius)
 
         end program
 
 
         subroutine inverse(n,m,si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker,h,tmin,&
-        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz)
+        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz,radius)
         integer si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker
         real(8) h,tmin
         real(8),dimension(n,m)::v,travel_time
@@ -34,10 +35,7 @@
         integer,dimension(n,m)::kinds,band
         real(8),dimension(maxsize)::bandwt
         integer,dimension(maxsize)::bandwx,bandwz 
-        integer radius
 
-        print*, 'Input the radius:'
-        read(*,*) radius
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%1 Input the slowness parameter !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         open(11,file='v.txt',status='old')
@@ -51,7 +49,7 @@
         size=0
         isroot=1
         
-        breaker=1
+        breaker=0
 
         if(breaker.eq.0)then
             travel_time=50.0
@@ -146,7 +144,7 @@
 
         do i=1,n
         do j=1,m
-            if ( band(i,j).eq.1)then
+            if (band(i,j).eq.1)then
                 call bandw_insert(i,j,travel_time(i,j),bandwx,bandwz,bandwt,isroot,size,maxsize) 
             endif
         end do
@@ -256,7 +254,7 @@
             open(17,file='travel_time.txt',status='replace')
             write(17,35)((travel_time(i,j),j=1,m),i=1,n)
             close(17)
-35          format(1000F12.8)  
+35          format(2000F12.8)  
         endif 
 
         end subroutine
@@ -392,23 +390,23 @@
             time_temp(4)=travel_time(i,(j+1))+h/v(i,(j+1))
         endif
         if(((i-1).ge.1).and.((j-1).ge.1))then
-            time_temp(5)=(travel_time((i-1),j)+travel_time(i,(j-1))+sqrt(abs((2*(h/v(i,j))**2-&
-            (travel_time((i-1),j)-travel_time(i,(j-1)))**2))))/2
+            time_temp(5)=(travel_time((i-1),j)+travel_time(i,(j-1))+sqrt(abs((2*(h/v(i,j))**2-(travel_time((i-1),j)&
+            -travel_time(i,(j-1)))**2))))/2
             time_temp(9)=travel_time((i-1),(j-1))+sqrt(2.0)*h/v(i,j)
         endif
         if(((i+1).le.n).and.((j-1).ge.1))then
-            time_temp(6)=(travel_time((i+1),j)+travel_time(i,(j-1))+sqrt(abs((2*(h/v(i,j))**2-&
-            (travel_time((i+1),j)-travel_time(i,(j-1)))**2))))/2
+            time_temp(6)=(travel_time((i+1),j)+travel_time(i,(j-1))+sqrt(abs((2*(h/v(i,j))**2-(travel_time((i+1),j)-&
+            travel_time(i,(j-1)))**2))))/2
             time_temp(10)=travel_time((i+1),(j-1))+sqrt(2.0)*h/v(i,j)
         endif
         if(((i-1).ge.1).and.((j+1).le.m))then
-            time_temp(7)=(travel_time((i-1),j)+travel_time(i,(j+1))+sqrt(abs((2*(h/v(i,j))**2-&
-            (travel_time((i-1),j)-travel_time(i,(j+1)))**2))))/2
+            time_temp(7)=(travel_time((i-1),j)+travel_time(i,(j+1))+sqrt(abs((2*(h/v(i,j))**2-(travel_time((i-1),j)-&
+            travel_time(i,(j+1)))**2))))/2
             time_temp(11)=travel_time((i-1),(j+1))+sqrt(2.0)*h/v(i,j)
         endif
         if(((i+1).le.n).and.((j+1).le.m))then
-            time_temp(8)=(travel_time((i+1),j)+travel_time(i,(j+1))+sqrt(abs((2*(h/v(i,j))**2-&
-             (travel_time((i+1),j)-travel_time(i,(j+1)))**2))))/2
+            time_temp(8)=(travel_time((i+1),j)+travel_time(i,(j+1))+sqrt(abs((2*(h/v(i,j))**2-(travel_time((i+1),j)-&
+            travel_time(i,(j+1)))**2))))/2
             time_temp(12)=travel_time((i+1),(j+1))+sqrt(2.0)*h/v(i,j)
         endif
 

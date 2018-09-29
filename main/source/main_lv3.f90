@@ -6,7 +6,8 @@
 !isroot distinguish the source point
 !breaker switch
         real(8) h,tmin
-        parameter(n=350,m=500,si=125,sj=250,h=20,maxsize=10000)
+        parameter(h=20,maxsize=10000)
+        parameter(n=#size_of_n#,m=#size_of_m#,si=#pi_of_source#,sj=#pj_of_source#,radius=#radius#)
 !m n discretized grid size
 !maxsize max size of the band
 !si sj source
@@ -20,13 +21,13 @@
         integer,dimension(maxsize)::bandwx,bandwz
         
         call inverse(n,m,si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker,h,tmin,&
-        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz)
+        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz,radius)
 
         end program
 
 
         subroutine inverse(n,m,si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker,h,tmin,&
-        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz)
+        v,travel_time,time_temp,temp,kinds,band,bandwt,bandwx,bandwz,radius)
         integer si,sj,imin,jmin,i,j,size,maxsize,isroot,breaker
         real(8) h,tmin
         real(8),dimension(n,m)::v,travel_time
@@ -34,10 +35,6 @@
         integer,dimension(n,m)::kinds,band
         real(8),dimension(maxsize)::bandwt
         integer,dimension(maxsize)::bandwx,bandwz 
-        integer radius
-
-        print*, 'Input the radius:'
-        read(*,*) radius
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%1 Input the slowness parameter !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         open(11,file='v.txt',status='old')
