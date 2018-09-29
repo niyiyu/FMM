@@ -1,3 +1,0 @@
-cd /Users/niyiyu/Documents/Fortran/FMM/main/
-gfortran ./main2.f90 -o FMMprogram
-./a.out
